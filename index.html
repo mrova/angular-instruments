@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>perf</title>
+        <script src="angular.js"></script>
+        <script src="instrument.js"></script>
+        <script src="app.js"></script>
+    </head>
+    <body ng-app="app">
+        Hello <input ng-model="name" />
+        {{ name }}
+        <div ng-if="true">
+            {{ name }}
+        </div>
+    </body>
+</html>
