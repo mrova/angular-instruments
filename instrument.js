@@ -14,7 +14,7 @@
         $provide.decorator('$rootScope', function ($delegate) {
             var debug = {
                 watchPerf: {},
-                applyPerf: {},
+                // applyPerf: {},
 
                 // watchers: {},
                 // scopes: {}
@@ -32,8 +32,16 @@
 
                 // save data for this specific watcher in an array (better way to do this per scope?)
                 // only do this when first watch call is done, not a second time
-                if (!debug.watchPerf[watchStr]) {
-                    debug.watchPerf[watchStr] = {
+
+                if (!debug.watchPerf[executingScope.$id]) {
+                    debug.watchPerf[executingScope.$id] = {
+                        parent: executingScope.$parent && executingScope.$parent.$id,
+                        watchers: {}
+                    }
+                }
+
+                if (!debug.watchPerf[executingScope.$id].watchers[watchStr]) {
+                    debug.watchPerf[executingScope.$id].watchers[watchStr] = {
                         time: 0,
                         calls: 0
                     };
@@ -61,37 +69,37 @@
                     var ret = (typeof w === 'function') ? _watchExpression.apply(this, arguments) :
                                                           executingScope.$eval(_watchExpression);
                     var end = performance.now();
-                    debug.watchPerf[watchStr].time += (end - start);
-                    debug.watchPerf[watchStr].calls += 1;
+                    debug.watchPerf[executingScope.$id].watchers[watchStr].time += (end - start);
+                    debug.watchPerf[executingScope.$id].watchers[watchStr].calls += 1;
                     return ret;
                 };
 
 
                 // now patch the applyFn (if it is a function | is set) @TODO can it be something else?
-                if (typeof applyFunction === 'function') {
-
-                    // init apply perf data
-                    // moved checks like batarang comment said
-                    var applyStr = applyFunction.toString();
-                    if (!debug.applyPerf[applyStr]) {
-                        debug.applyPerf[applyStr] = {
-                            time: 0,
-                            calls: 0
-                        };
-                    }
-
-
-                    var _applyFunction = applyFunction;
-                    applyFunction = function () {
-                        var start = performance.now();
-                        var ret = _applyFunction.apply(this, arguments);
-                        var end = performance.now();
-
-                        debug.applyPerf[applyStr].time += (end - start);
-                        debug.applyPerf[applyStr].calls += 1;
-                        return ret;
-                    };
-                }
+                // if (typeof applyFunction === 'function') {
+                //
+                //     // init apply perf data
+                //     // moved checks like batarang comment said
+                //     var applyStr = applyFunction.toString();
+                //     if (!debug.applyPerf[applyStr]) {
+                //         debug.applyPerf[applyStr] = {
+                //             time: 0,
+                //             calls: 0
+                //         };
+                //     }
+                //
+                //
+                //     var _applyFunction = applyFunction;
+                //     applyFunction = function () {
+                //         var start = performance.now();
+                //         var ret = _applyFunction.apply(this, arguments);
+                //         var end = performance.now();
+                //
+                //         debug.applyPerf[applyStr].time += (end - start);
+                //         debug.applyPerf[applyStr].calls += 1;
+                //         return ret;
+                //     };
+                // }
 
                 // call original function and return its value
                 var newArgs = [watchExpression, applyFunction].concat(
@@ -99,6 +107,10 @@
                 );
                 return _watch.apply(this, newArgs);
             };
+
+            $delegate.$watch(function () {
+                console.log(debug);
+            })
 
 
             // patch $destroy
