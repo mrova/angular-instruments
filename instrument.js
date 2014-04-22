@@ -1,11 +1,16 @@
 (function (exports) {
     'use strict';
 
-    exports.angular.module('ngInstruments', []).config(function ($provide) {
+    var debug = {
+        watchPerf: {}
+    };
+
+    var instrumentsModule = exports.angular.module('ngInstruments', []);
+
+    instrumentsModule.value('watchPerf', debug.watchPerf);
+
+    instrumentsModule.config(function ($provide) {
         $provide.decorator('$rootScope', function ($delegate) {
-            var debug = {
-                watchPerf: {}
-            };
 
             // @TODO find cross-browser solution for __proto
             var _watch = $delegate.__proto__.$watch;
