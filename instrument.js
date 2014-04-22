@@ -16,8 +16,8 @@
                 watchPerf: {},
                 applyPerf: {},
 
-                watchers: {},
-                scopes: {}
+                // watchers: {},
+                // scopes: {}
             };
 
             // registering watches
@@ -42,12 +42,12 @@
 
                 // save watcher scope id
                 // only do this when first watch call is done, not a second time
-                if (!debug.watchers[executingScope.$id]) {
-                    debug.watchers[executingScope.$id] = [];
-                }
+                // if (!debug.watchers[executingScope.$id]) {
+                //     debug.watchers[executingScope.$id] = [];
+                // }
 
                 // save this watchStr to this scope
-                debug.watchers[executingScope.$id].push(watchStr);
+                // debug.watchers[executingScope.$id].push(watchStr);
 
 
                 // now patch the watchExpression with instrumenting calls
@@ -102,46 +102,46 @@
 
 
             // patch $destroy
-            var _destroy = $delegate.__proto__.$destroy;
-            $delegate.__proto__.$destroy = function () {
-                if (debug.watchers[this.$id]) {
-                  delete debug.watchers[this.$id];
-                }
-                if (debug.scopes[this.$id]) {
-                  delete debug.scopes[this.$id];
-                }
-                return _destroy.apply(this, arguments);
-            };
+            // var _destroy = $delegate.__proto__.$destroy;
+            // $delegate.__proto__.$destroy = function () {
+            //     if (debug.watchers[this.$id]) {
+            //       delete debug.watchers[this.$id];
+            //     }
+            //     if (debug.scopes[this.$id]) {
+            //       delete debug.scopes[this.$id];
+            //     }
+            //     return _destroy.apply(this, arguments);
+            // };
 
 
             // patch $new
-            var _new = $delegate.__proto__.$new;
-            $delegate.__proto__.$new = function () {
-                var ret = _new.apply(this, arguments);
-
-                // create empty watchers array for this scope
-                if (!debug.watchers[ret.$id]) {
-                    debug.watchers[ret.$id] = [];
-                }
-
-                debug.scopes[ret.$id] = ret;
-                debug.scopes[this.$id] = this;
-
-                return ret;
-            };
+            // var _new = $delegate.__proto__.$new;
+            // $delegate.__proto__.$new = function () {
+            //     var ret = _new.apply(this, arguments);
+            //
+            //     // create empty watchers array for this scope
+            //     if (!debug.watchers[ret.$id]) {
+            //         debug.watchers[ret.$id] = [];
+            //     }
+            //
+            //     debug.scopes[ret.$id] = ret;
+            //     debug.scopes[this.$id] = this;
+            //
+            //     return ret;
+            // };
 
             // patch $apply
-            var _apply = $delegate.__proto__.$apply;
-            $delegate.__proto__.$apply = function (fn) {
-                var start = performance.now();
-                var ret = _apply.apply(this, arguments);
-                var end = performance.now();
-
-                // could also save complete apply performance here?
-                console.log(debug);
-
-                return ret;
-            };
+            // var _apply = $delegate.__proto__.$apply;
+            // $delegate.__proto__.$apply = function (fn) {
+            //     var start = performance.now();
+            //     var ret = _apply.apply(this, arguments);
+            //     var end = performance.now();
+            //
+            //     // could also save complete apply performance here?
+            //     // console.log(debug);
+            //
+            //     return ret;
+            // };
 
             return $delegate;
         });
