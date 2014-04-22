@@ -158,20 +158,4 @@
         }
     }
 
-    function applyFnToLogString(fn) {
-        var str;
-        if (fn) {
-          if (fn.name) {
-            str = fn.name;
-          } else if (fn.toString().split('\n').length > 1) {
-            str = 'fn () { ' + fn.toString().split('\n')[1].trim() + ' /* ... */ }';
-          } else {
-            str = fn.toString().trim().substr(0, 30) + '...';
-          }
-        } else {
-          str = '$apply';
-        }
-        return str;
-      };
-
 }(this));
